@@ -54,7 +54,7 @@ kubectl rollout restart deployment/radarr -n media
 
 ## Notes
 
-- Using `Longhorn` until `Postgres` is setup for `sonarr|radarr`.
+- Using `Longhorn` until `Postgres` is setup for `sonarr`|`radarr`.
 - `nfs-export-root` maps to your NFS share root.
 - Mounting without `subPath` mounts the root of the PVC.
 - Current app namespace is `media`.
