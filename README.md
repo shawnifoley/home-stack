@@ -18,13 +18,13 @@ Kubernetes manifests for home media services and supporting cluster resources.
 1. Apply infra:
 
 ```bash
-kubectl apply -k /Users/sfoley/repos/home-pods/k8s/infra
+kubectl apply -k k8s/infra
 ```
 
 2. Apply media stack:
 
 ```bash
-kubectl apply -k /Users/sfoley/repos/home-pods/k8s/media-stack/overlays/home
+kubectl apply -k k8s/media-stack/overlays/home
 ```
 
 ## Useful Commands
@@ -32,8 +32,8 @@ kubectl apply -k /Users/sfoley/repos/home-pods/k8s/media-stack/overlays/home
 Preview rendered manifests:
 
 ```bash
-kubectl kustomize /Users/sfoley/repos/home-pods/k8s/infra
-kubectl kustomize /Users/sfoley/repos/home-pods/k8s/media-stack/overlays/home
+kubectl kustomize k8s/infra
+kubectl kustomize k8s/media-stack/overlays/home
 ```
 
 Rollout status:
@@ -54,7 +54,7 @@ kubectl rollout restart deployment/radarr -n media
 
 ## Notes
 
-- Using longhorn until Postgres is setup for sonarr|radarr.
+- Using 'Longhorn' until 'Postgres' is setup for 'sonarr|radarr'.
 - `nfs-export-root` maps to your NFS share root.
 - Mounting without `subPath` mounts the root of the PVC.
 - Current app namespace is `media`.
