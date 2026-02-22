@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restart-sonarr
+  namespace: media
+spec:
+  schedule: "5 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl
+              command:
+                - kubectl
+                - rollout
+                - restart
+                - deployment/sonarr
+          restartPolicy: OnFailure

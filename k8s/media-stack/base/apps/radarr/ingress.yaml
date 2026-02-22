@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: radarr
+  namespace: media
+  annotations:
+    cert-manager.io/cluster-issuer: replace-me
+spec:
+  ingressClassName: replace-me
+  tls:
+    - hosts:
+        - radarr.example.local
+      secretName: radarr-tls
+  rules:
+    - host: radarr.example.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: radarr
+                port:
+                  number: 80
