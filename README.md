@@ -1,4 +1,4 @@
-# home-pods
+# home-stack
 
 Kubernetes manifests for home media services and supporting cluster resources.
 
