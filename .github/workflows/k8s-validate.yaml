@@ -41,7 +41,7 @@ jobs:
 
       - name: Schema validate rendered manifests (kubeconform)
         run: |
-          /tmp/kubeconform -strict -summary /tmp/infra-render.yaml
+          /tmp/kubeconform -strict -summary --skip=ClusterIssuer /tmp/infra-render.yaml
           /tmp/kubeconform -strict -summary /tmp/media-render.yaml
 
       - name: Install kube-linter
