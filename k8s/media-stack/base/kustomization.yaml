@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - storage/nfs-export-root-pvc.yaml
-  - storage/sabnzbd-config-pvc.yaml
   - storage/sonarr-config-pvc.yaml
   - storage/radarr-config-pvc.yaml
   - apps/sabnzbd/deployment.yaml
