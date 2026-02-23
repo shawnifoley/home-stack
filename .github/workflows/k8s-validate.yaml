@@ -1,0 +1,56 @@
+name: Validate Kubernetes Manifests
+
+on:
+  pull_request:
+    paths:
+      - "k8s/**"
+      - ".github/workflows/k8s-validate.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - "k8s/**"
+      - ".github/workflows/k8s-validate.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      KUBECONFORM_VERSION: v0.6.7
+      KUBE_LINTER_VERSION: v0.7.6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Render manifests
+        run: |
+          kubectl kustomize k8s/infra > /tmp/infra-render.yaml
+          kubectl kustomize k8s/media-stack/overlays/home > /tmp/media-render.yaml
+
+      - name: Install kubeconform
+        run: |
+          curl -sSL -o /tmp/kubeconform.tar.gz "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz"
+          tar -xzf /tmp/kubeconform.tar.gz -C /tmp kubeconform
+          chmod +x /tmp/kubeconform
+
+      - name: Schema validate rendered manifests (kubeconform)
+        run: |
+          /tmp/kubeconform -strict -summary /tmp/infra-render.yaml
+          /tmp/kubeconform -strict -summary /tmp/media-render.yaml
+
+      - name: Install kube-linter
+        run: |
+          curl -sSL -o /tmp/kube-linter.tar.gz "https://github.com/stackrox/kube-linter/releases/download/${KUBE_LINTER_VERSION}/kube-linter-linux.tar.gz"
+          tar -xzf /tmp/kube-linter.tar.gz -C /tmp
+          chmod +x /tmp/kube-linter
+
+      - name: Lint rendered manifests (kube-linter)
+        run: |
+          /tmp/kube-linter lint /tmp/infra-render.yaml
+          /tmp/kube-linter lint /tmp/media-render.yaml

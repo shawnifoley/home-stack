@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-sonarr-config
+  namespace: media
+spec:
+  schedule: "30 2 * * 0"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: alpine:3.20
+              command:
+                - /bin/sh
+                - -ceu
+                - |
+                  apk add --no-cache rsync >/dev/null
+                  root="/backup/backups/sonarr-config"
+                  dest="${root}/Backups"
+                  mkdir -p "${dest}"
+                  if [ -d /config/Backups ]; then
+                    rsync -azP --delete /config/Backups/ "${dest}/"
+                  fi
+              volumeMounts:
+                - name: source
+                  mountPath: /config
+                  readOnly: true
+                - name: backup
+                  mountPath: /backup
+          volumes:
+            - name: source
+              persistentVolumeClaim:
+                claimName: sonarr-config
+            - name: backup
+              persistentVolumeClaim:
+                claimName: nfs-export-root

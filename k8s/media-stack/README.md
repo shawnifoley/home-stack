@@ -5,13 +5,13 @@ This folder organizes Sabnzbd, Sonarr, and Radarr into a reusable base with a ho
 ## Apply
 
 ```bash
-kubectl apply -k /Users/sfoley/repos/home-pods/k8s/media-stack/overlays/home
+kubectl apply -k k8s/media-stack/overlays/home
 ```
 
 ## Preview
 
 ```bash
-kubectl kustomize /Users/sfoley/repos/home-pods/k8s/media-stack/overlays/home
+kubectl kustomize k8s/media-stack/overlays/home
 ```
 
 ## Layout

@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
