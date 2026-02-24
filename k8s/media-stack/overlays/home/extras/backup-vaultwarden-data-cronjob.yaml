@@ -1,10 +1,10 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: backup-sonarr-config
+  name: backup-vaultwarden-data
   namespace: media
 spec:
-  schedule: "45 2 * * 0"
+  schedule: "45 3 * * 0"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
@@ -14,11 +14,11 @@ spec:
       template:
         metadata:
           labels:
-            app: backup-sonarr-config
+            app: backup-vaultwarden-data
         spec:
           restartPolicy: OnFailure
 
-          # Force the backup pod to run on the same node as the sonarr pod
+          # Force the backup pod to run on the same node as the vaultwarden pod
           affinity:
             podAffinity:
               preferredDuringSchedulingIgnoredDuringExecution:
@@ -26,7 +26,7 @@ spec:
                   podAffinityTerm:
                     labelSelector:
                       matchLabels:
-                        app: sonarr
+                        app: vaultwarden
                     topologyKey: kubernetes.io/hostname
 
           containers:
@@ -38,25 +38,30 @@ spec:
                 - -ceu
                 - |
                   apk add --no-cache rsync >/dev/null
-                  root="/backup/backups/sonarr-config"
-                  dest="${root}/Backups"
+                  ts="$(date +%F-%H%M%S)"
+                  root="/backup/backups/vaultwarden-data"
+                  dest="${root}/${ts}"
                   mkdir -p "${dest}"
-
-                  if [ -d /config/Backups ]; then
-                    rsync -azP --delete /config/Backups/ "${dest}/"
-                  else
-                    echo "No /config/Backups directory found; nothing to sync."
-                  fi
+                  rsync -a --delete \
+                    --include='rsa*' \
+                    --include='db.sqlite3' \
+                    --include='db.sqlite3-wal' \
+                    --include='db.sqlite3-shm' \
+                    --include='attachments/***' \
+                    --exclude='*' \
+                    /data/ "${dest}/"
+                  ln -sfn "${dest}" "${root}/latest"
+                  find "${root}" -mindepth 1 -maxdepth 1 -type d -mtime +14 -exec rm -rf {} \;
               volumeMounts:
                 - name: source
-                  mountPath: /config
+                  mountPath: /data
                   readOnly: true
                 - name: backup
                   mountPath: /backup
           volumes:
             - name: source
               persistentVolumeClaim:
-                claimName: sonarr-config
+                claimName: vaultwarden-data
             - name: backup
               persistentVolumeClaim:
                 claimName: nfs-export-root

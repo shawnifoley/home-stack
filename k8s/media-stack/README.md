@@ -18,4 +18,8 @@ kubectl kustomize k8s/media-stack/overlays/home
 
 - `base/`: reusable manifests for apps and storage.
 - `overlays/home/`: cluster-specific values (hosts, ingress class, issuer, image policy).
-- `overlays/home/extras/`: optional/cluster-local extras such as scheduled rollout restarts.
+- `overlays/home/extras/`: optional/cluster-local extras such as scheduled rollout restarts and backup CronJobs.
+
+## Backup Behavior
+
+- Backup CronJobs prefer scheduling on the same node as their target app pod, but do not require it.

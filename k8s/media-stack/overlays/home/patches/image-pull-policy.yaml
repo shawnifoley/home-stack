@@ -33,3 +33,15 @@ spec:
       containers:
         - name: radarr
           imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultwarden
+  namespace: media
+spec:
+  template:
+    spec:
+      containers:
+        - name: vaultwarden
+          imagePullPolicy: Always

@@ -58,6 +58,7 @@ kubectl rollout restart deployment/radarr -n media
 - `nfs-export-root` maps to your NFS share root.
 - Mounting without `subPath` mounts the root of the PVC.
 - Current app namespace is `media`.
+- Backup CronJobs use `preferred` pod affinity (same-node preference, not a hard requirement) to improve schedule reliability.
 
 ## Troubleshooting
 

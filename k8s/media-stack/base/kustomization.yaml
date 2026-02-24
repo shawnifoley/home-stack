@@ -1,10 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - namespace.yaml
+  - media-namespace.yaml
   - storage/nfs-export-root-pvc.yaml
   - storage/sonarr-config-pvc.yaml
   - storage/radarr-config-pvc.yaml
+  - storage/vaultwarden-data-pvc.yaml
   - apps/sabnzbd/deployment.yaml
   - apps/sabnzbd/service.yaml
   - apps/sabnzbd/ingress.yaml
@@ -14,3 +15,6 @@ resources:
   - apps/radarr/deployment.yaml
   - apps/radarr/service.yaml
   - apps/radarr/ingress.yaml
+  - apps/vaultwarden/deployment.yaml
+  - apps/vaultwarden/service.yaml
+  - apps/vaultwarden/ingress.yaml

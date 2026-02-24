@@ -21,11 +21,13 @@ spec:
           # Force the backup pod to run on the same node as the radarr pod
           affinity:
             podAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-                - labelSelector:
-                    matchLabels:
-                      app: radarr
-                  topologyKey: kubernetes.io/hostname
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        app: radarr
+                    topologyKey: kubernetes.io/hostname
 
           containers:
             - name: backup
