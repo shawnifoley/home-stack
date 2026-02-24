@@ -10,12 +10,27 @@ spec:
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      backoffLimit: 2
       template:
+        metadata:
+          labels:
+            app: backup-radarr-config
         spec:
           restartPolicy: OnFailure
+
+          # Force the backup pod to run on the same node as the radarr pod
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app: radarr
+                  topologyKey: kubernetes.io/hostname
+
           containers:
             - name: backup
               image: alpine:3.20
+              imagePullPolicy: IfNotPresent
               command:
                 - /bin/sh
                 - -ceu
@@ -24,8 +39,11 @@ spec:
                   root="/backup/backups/radarr-config"
                   dest="${root}/Backups"
                   mkdir -p "${dest}"
+
                   if [ -d /config/Backups ]; then
                     rsync -azP --delete /config/Backups/ "${dest}/"
+                  else
+                    echo "No /config/Backups directory found; nothing to sync."
                   fi
               volumeMounts:
                 - name: source

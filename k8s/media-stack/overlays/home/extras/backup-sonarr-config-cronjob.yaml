@@ -4,18 +4,33 @@ metadata:
   name: backup-sonarr-config
   namespace: media
 spec:
-  schedule: "30 2 * * 0"
+  schedule: "45 2 * * 0"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      backoffLimit: 2
       template:
+        metadata:
+          labels:
+            app: backup-sonarr-config
         spec:
           restartPolicy: OnFailure
+
+          # Force the backup pod to run on the same node as the sonarr pod
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app: sonarr
+                  topologyKey: kubernetes.io/hostname
+
           containers:
             - name: backup
               image: alpine:3.20
+              imagePullPolicy: IfNotPresent
               command:
                 - /bin/sh
                 - -ceu
@@ -24,8 +39,11 @@ spec:
                   root="/backup/backups/sonarr-config"
                   dest="${root}/Backups"
                   mkdir -p "${dest}"
+
                   if [ -d /config/Backups ]; then
                     rsync -azP --delete /config/Backups/ "${dest}/"
+                  else
+                    echo "No /config/Backups directory found; nothing to sync."
                   fi
               volumeMounts:
                 - name: source
