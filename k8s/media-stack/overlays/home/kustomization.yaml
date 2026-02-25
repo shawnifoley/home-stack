@@ -5,6 +5,7 @@ resources:
   - extras/restart-sabnzbd-cronjob.yaml
   - extras/restart-sonarr-cronjob.yaml
   - extras/restart-radarr-cronjob.yaml
+  - extras/restart-vaultwarden-cronjob.yaml
   - extras/backup-sonarr-config-cronjob.yaml
   - extras/backup-radarr-config-cronjob.yaml
   - extras/backup-vaultwarden-data-cronjob.yaml
