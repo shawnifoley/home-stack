@@ -3,4 +3,6 @@ kind: Kustomization
 resources:
   - longhorn.yaml
   - nfs-storage.yaml
+  - longhorn-backup-target.yaml
+  - longhorn-recurring-jobs.yaml
   - cluster-issuer-cloudflare.yaml

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: restart-sab
+  name: restart-sabnzbd
   namespace: media
 spec:
   schedule: "0 3 * * *"

@@ -52,13 +52,41 @@ kubectl rollout restart deployment/sonarr -n media
 kubectl rollout restart deployment/radarr -n media
 ```
 
+Access UIs with port-forward:
+
+```bash
+kubectl -n longhorn-system port-forward svc/longhorn-frontend 8080:80
+kubectl -n kube-system port-forward svc/traefik 9000:9000
+```
+
 ## Notes
 
-- Using `Longhorn` until `Postgres` is setup for `sonarr`|`radarr`.
 - `nfs-export-root` maps to your NFS share root.
 - Mounting without `subPath` mounts the root of the PVC.
 - Current app namespace is `media`.
-- Backup CronJobs use `preferred` pod affinity (same-node preference, not a hard requirement) to improve schedule reliability.
+- Backups now use Longhorn recurring backups to NFS (set backup target in Longhorn first).
+- Fresh-cluster restore steps: `docs/longhorn-dr-runbook.md`.
+
+## Longhorn Backup Attach (Existing Volumes)
+
+For pre-existing Longhorn volumes, attach recurring jobs once by labeling the `Volume` CRs:
+
+```bash
+kubectl -n media get pvc sonarr-config radarr-config vaultwarden-data \
+  -o custom-columns=PVC:.metadata.name,VOLUME:.spec.volumeName
+
+kubectl -n longhorn-system label volumes.longhorn.io <sonarr-volume-name> \
+  recurring-job.longhorn.io/source=enabled \
+  recurring-job.longhorn.io/backup-sonarr-weekly=enabled --overwrite
+
+kubectl -n longhorn-system label volumes.longhorn.io <radarr-volume-name> \
+  recurring-job.longhorn.io/source=enabled \
+  recurring-job.longhorn.io/backup-radarr-weekly=enabled --overwrite
+
+kubectl -n longhorn-system label volumes.longhorn.io <vaultwarden-volume-name> \
+  recurring-job.longhorn.io/source=enabled \
+  recurring-job.longhorn.io/backup-vaultwarden-daily=enabled --overwrite
+```
 
 ## Troubleshooting
 
