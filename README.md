@@ -8,11 +8,11 @@ Single repo for home-cluster provisioning and workloads:
 
 ## Start Here
 
-1. Bootstrap nodes and k3s: `docs/bootstrap-tofu-ansible.md`
-2. Deploy platform/workloads: `docs/k8s-ops.md`
-3. Configure and validate backups: `docs/k8s-ops.md#longhorn-backups`
-4. Restore on a fresh cluster: `docs/longhorn-dr-runbook.md`
-5. Troubleshooting: `docs/troubleshooting.md`
+1. Bootstrap nodes and k3s: [docs/bootstrap-tofu-ansible.md](docs/bootstrap-tofu-ansible.md)
+2. Deploy platform/workloads: [docs/k8s-ops.md](docs/k8s-ops.md)
+3. Configure and validate backups: [docs/k8s-ops.md#longhorn-backups](docs/k8s-ops.md#longhorn-backups)
+4. Restore on a fresh cluster: [docs/longhorn-dr-runbook.md](docs/longhorn-dr-runbook.md)
+5. Troubleshooting: [docs/troubleshooting.md](docs/troubleshooting.md)
 
 ## Repo Map
 
