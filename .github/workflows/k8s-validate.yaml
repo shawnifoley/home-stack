@@ -41,7 +41,10 @@ jobs:
 
       - name: Schema validate rendered manifests (kubeconform)
         run: |
-          /tmp/kubeconform -strict -summary --skip=ClusterIssuer /tmp/infra-render.yaml
+          /tmp/kubeconform -strict -summary   -schema-location default \
+          -schema-location 'https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/{{.NormalizedKubernetesVersion}}-standalone-strict/{{.ResourceKind}}.json' \
+          -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+          /tmp/infra-render.yaml
           /tmp/kubeconform -strict -summary /tmp/media-render.yaml
 
       - name: Install kube-linter
