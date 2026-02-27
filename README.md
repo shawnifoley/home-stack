@@ -12,6 +12,7 @@ Single repo for home-cluster provisioning and workloads:
 2. Deploy platform/workloads: `docs/k8s-ops.md`
 3. Configure and validate backups: `docs/k8s-ops.md#longhorn-backups`
 4. Restore on a fresh cluster: `docs/longhorn-dr-runbook.md`
+5. Troubleshooting: `docs/troubleshooting.md`
 
 ## Repo Map
 

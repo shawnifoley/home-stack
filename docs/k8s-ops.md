@@ -7,20 +7,6 @@ kubectl apply -k k8s/infra
 kubectl apply -k k8s/media-stack/overlays/home
 ```
 
-## ArgoCD
-
-Apply app definitions:
-
-```bash
-kubectl apply -k k8s/argocd
-```
-
-Notes:
-
-- `home-infra` sync wave `-1`
-- `home-media` sync wave `0`
-- Update `repoURL` placeholders in `k8s/argocd/*.yaml` before first apply
-
 ## Validate
 
 ```bash
@@ -74,3 +60,7 @@ kubectl -n longhorn-system label volumes.longhorn.io <vaultwarden-volume-name> \
 ## Restore
 
 See `docs/longhorn-dr-runbook.md`.
+
+## Troubleshooting
+
+See `docs/troubleshooting.md`.
