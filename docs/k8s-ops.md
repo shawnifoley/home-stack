@@ -59,8 +59,8 @@ kubectl -n longhorn-system label volumes.longhorn.io <vaultwarden-volume-name> \
 
 ## Restore
 
-See `docs/longhorn-dr-runbook.md`.
+See [docs/longhorn-dr-runbook.md](longhorn-dr-runbook.md).
 
 ## Troubleshooting
 
-See `docs/troubleshooting.md`.
+See [docs/troubleshooting.md](troubleshooting.md).

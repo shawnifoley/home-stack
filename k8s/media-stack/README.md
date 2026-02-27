@@ -23,4 +23,4 @@ kubectl kustomize k8s/media-stack/overlays/home
 ## Backup Behavior
 
 - Longhorn recurring backups are managed in `k8s/infra`.
-- For operational commands and one-time volume attach steps, use `docs/k8s-ops.md`.
+- For operational commands and one-time volume attach steps, use [docs/k8s-ops.md](../../docs/k8s-ops.md).
