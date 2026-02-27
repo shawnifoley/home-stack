@@ -64,7 +64,7 @@ kubectl -n kube-system port-forward svc/traefik 9000:9000
 - `nfs-export-root` maps to your NFS share root.
 - Mounting without `subPath` mounts the root of the PVC.
 - Current app namespace is `media`.
-- Backups now use Longhorn recurring backups to NFS (set backup target in Longhorn first).
+- Backups use Longhorn recurring backups to NFS (set backup target in Longhorn first).
 - Fresh-cluster restore steps: `docs/longhorn-dr-runbook.md`.
 
 ## Longhorn Backup Attach (Existing Volumes)
