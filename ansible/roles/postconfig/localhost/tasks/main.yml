@@ -1,0 +1,40 @@
+---
+- name: Check kubeconfig exists
+  ansible.builtin.stat:
+    path: "{{ kubeconfig_yaml }}"
+  register: kubeconfig_path
+
+- name: Point kubeconfig to the API endpoint
+  ansible.builtin.replace:
+    path: "{{ kubeconfig_yaml }}"
+    regexp: 'https://(127\.0\.0\.1|localhost):6443'
+    replace: "https://{{ k3s_api_vip | default(master_ip) }}:6443"
+  when:
+    - kubeconfig_path.stat.exists
+    - copy_kubeconfig | bool
+
+- name: Lock down kubeconfig permissions
+  ansible.builtin.file:
+    path: "{{ kubeconfig_yaml }}"
+    mode: "0600"
+  when: kubeconfig_path.stat.exists
+
+- name: Include MetalLB tasks
+  ansible.builtin.include_tasks: metallb.yml
+  when: metallb | bool
+
+- name: Include cert-manager tasks
+  ansible.builtin.include_tasks: cert_manager.yml
+  when: cert_manager | bool
+
+- name: Include Longhorn tasks
+  ansible.builtin.include_tasks: longhorn.yml
+  when: longhorn | bool
+
+- name: Include Traefik tasks
+  ansible.builtin.include_tasks: traefik.yml
+  when: traefik | bool
+
+- name: Include ArgoCD tasks
+  ansible.builtin.include_tasks: argocd.yml
+  when: argocd | bool

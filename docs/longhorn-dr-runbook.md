@@ -14,7 +14,7 @@
 Apply infra first (includes Longhorn backup target + recurring jobs):
 
 ```bash
-kubectl apply -k /Users/sfoley/repos/home-stack/k8s/infra
+kubectl apply -k k8s/infra
 ```
 
 Check backup target health:
@@ -34,42 +34,10 @@ kubectl -n longhorn-system get backups.longhorn.io -o wide
 
 Expected: backup objects exist for Sonarr, Radarr, and Vaultwarden.
 
-## 3) Restore volumes from Longhorn backups
-
-Use Longhorn UI (`Backup` page):
-```bash
-kubectl -n longhorn-system port-forward svc/longhorn-frontend 8080:80
-```
-
-1. Select the latest good backup for each app volume.
-2. Restore each backup to a new Longhorn volume.
-3. For each restored volume, use Longhorn's `Create PV/PVC` action and create PVCs in namespace `media`.
-
-Restored PVC names:
-
-- `sonarr-config-restore`
-- `radarr-config-restore`
-- `vaultwarden-data-restore`
-
-## 4) Deploy apps and point them at restored PVCs
-
-Apply stack:
+Apply stack and take services down
 
 ```bash
-kubectl apply -k /Users/sfoley/repos/home-stack/k8s/media-stack/overlays/home
-```
-
-Patch deployments to use restored PVC names (temporary during DR):
-
-```bash
-kubectl -n media patch deployment sonarr --type='json' \
-  -p='[{"op":"replace","path":"/spec/template/spec/volumes/0/persistentVolumeClaim/claimName","value":"sonarr-config-restore"}]'
-
-kubectl -n media patch deployment radarr --type='json' \
-  -p='[{"op":"replace","path":"/spec/template/spec/volumes/0/persistentVolumeClaim/claimName","value":"radarr-config-restore"}]'
-
-kubectl -n media patch deployment vaultwarden --type='json' \
-  -p='[{"op":"replace","path":"/spec/template/spec/volumes/0/persistentVolumeClaim/claimName","value":"vaultwarden-data-restore"}]'
+kubectl apply -k k8s/media-stack/overlays/home
 ```
 
 Wait for rollouts:
@@ -80,27 +48,56 @@ kubectl rollout status deployment/radarr -n media
 kubectl rollout status deployment/vaultwarden -n media
 ```
 
-## 5) Re-attach recurring backups to restored volumes
+Take nodes dowwn to restore volumes
 
-Map restored PVCs to Longhorn volume names:
+```
+kubectl -n media scale deploy vaultwarden --replicas=0
+kubectl -n media scale deploy sonarr --replicas=0
+kubectl -n media scale deploy radarr --replicas=0
+```
+
+## 3) Restore volumes from Longhorn backups
+
+Use Longhorn UI (`Backup` page):
+```bash
+kubectl -n longhorn-system port-forward svc/longhorn-frontend 8080:80
+```
+
+1. Delete `detached` volumes ( vaultwarden, sonar, radarr )
+2. Restore each backup to a new Longhorn volume.
+3. For each restored volume, go to `Operation` -> `Create PV/PVC` action and create PVCs in namespace `media`.
+
+## 4) 
+
+Bring nodes backup with restored volumes
 
 ```bash
-kubectl -n media get pvc sonarr-config-restore radarr-config-restore vaultwarden-data-restore \
+kubectl -n media scale deploy vaultwarden --replicas=1
+kubectl -n media scale deploy sonarr --replicas=1
+kubectl -n media scale deploy radarr --replicas=1
+```
+
+## 5) Re-attach recurring backups to restored volumes
+
+Map PVCs to Longhorn volume names:
+
+```bash
+kubectl -n media get pvc sonarr-config radarr-confige vaultwarden-data \
   -o custom-columns=PVC:.metadata.name,VOLUME:.spec.volumeName
 ```
 
 Label each Longhorn `Volume` CR (one-time attach):
 
 ```bash
-kubectl -n longhorn-system label volumes.longhorn.io <sonarr-restore-volume-name> \
+kubectl -n longhorn-system label volumes.longhorn.io <sonarr-volume-name> \
   recurring-job.longhorn.io/source=enabled \
   recurring-job.longhorn.io/backup-sonarr-weekly=enabled --overwrite
 
-kubectl -n longhorn-system label volumes.longhorn.io <radarr-restore-volume-name> \
+kubectl -n longhorn-system label volumes.longhorn.io <radarr-volume-name> \
   recurring-job.longhorn.io/source=enabled \
   recurring-job.longhorn.io/backup-radarr-weekly=enabled --overwrite
 
-kubectl -n longhorn-system label volumes.longhorn.io <vaultwarden-restore-volume-name> \
+kubectl -n longhorn-system label volumes.longhorn.io <vaultwarden-volume-name> \
   recurring-job.longhorn.io/source=enabled \
   recurring-job.longhorn.io/backup-vaultwarden-daily=enabled --overwrite
 ```

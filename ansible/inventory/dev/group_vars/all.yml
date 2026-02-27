@@ -1,0 +1,30 @@
+k3s_version: v1.35.1+k3s1
+ansible_user: sfoley
+systemd_dir: /etc/systemd/system
+master_ip: "{{ hostvars[groups['masters'][0]]['ansible_host'] | default(groups['masters'][0]) }}"
+extra_server_args: "--write-kubeconfig-mode=644"
+extra_agent_args: ""
+copy_kubeconfig: true
+kubeconfig_yaml: "{{ lookup('env','HOME') }}/.kube/kubeconfig-dev.yaml"
+
+argocd: false
+argocd_version: "v3.3.1"
+argocd_domain: "argocd.fol3y.us"
+
+traefik: true
+traefik_chart_version: "v39.0.2"
+
+cert_manager: true
+cert_manager_version: "1.17.4"
+cert_manager_create_cloudflare_secret: true
+cloudflare_email: "shawnifoley@gmail.com"
+
+longhorn: true
+longhorn_chart_version: "1.10.0"
+
+metallb: true
+metallb_version: "v0.15.3"
+metallb_range: "192.168.1.30-192.168.1.39"
+
+kubevip_interface: "{{ ansible_default_ipv4.interface }}"
+kubevip_image: "ghcr.io/kube-vip/kube-vip:v0.8.2"

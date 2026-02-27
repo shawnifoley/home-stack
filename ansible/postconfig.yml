@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  connection: local
+  vars_prompt:
+    - name: cloudflare_api_token
+      prompt: "Enter your Cloudflare API token"
+      private: true
+  roles:
+    - role: postconfig/localhost

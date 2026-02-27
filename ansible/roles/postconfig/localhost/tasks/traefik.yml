@@ -1,0 +1,19 @@
+---
+- name: Install Traefik Ingress Controller
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_yaml }}"
+    name: traefik
+    chart_ref: traefik
+    release_namespace: traefik
+    create_namespace: true
+    chart_repo_url: https://traefik.github.io/charts
+    release_state: present
+    chart_version: "{{ traefik_chart_version }}"
+    values:
+      ingressClass:
+        enabled: true
+        isDefaultClass: false
+      providers:
+        kubernetesIngress:
+          publishedService:
+            enabled: true
