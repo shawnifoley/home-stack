@@ -7,7 +7,7 @@ extra_agent_args: ""
 copy_kubeconfig: true
 kubeconfig_yaml: "{{ lookup('env','HOME') }}/.kube/kubeconfig-prod.yaml"
 
-argocd: false
+argocd: true
 argocd_version: "v2.13.3"
 argocd_domain: "argocd.fol3y.us"
 
