@@ -19,6 +19,6 @@ Single repo for home-cluster provisioning and workloads:
 - `tofu/`: infrastructure provisioning
 - `ansible/`: cluster bootstrap/configuration
 - `k8s/infra/`: cluster-level resources (Longhorn/NFS/cert-manager)
-- `k8s/media-stack/`: app stack manifests (Sonarr/Radarr/Vaultwarden/Sabnzbd)
+- `k8s/media-stack/`: app stack manifests (Sabnzbd/Sonarr/Radarr/Vaultwarden/Mealie)
 - `k8s/argocd/`: ArgoCD `Application` definitions
 - `docs/`: operational runbooks

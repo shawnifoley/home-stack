@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/shawnifoley/home-stack.git
     targetRevision: main
-    path: k8s/media-stack/overlays/home
+    path: k8s/media-stack/overlays/prod
   destination:
     server: https://kubernetes.default.svc
     namespace: default

@@ -31,7 +31,7 @@ jobs:
       - name: Render manifests
         run: |
           kubectl kustomize k8s/infra > /tmp/infra-render.yaml
-          kubectl kustomize k8s/media-stack/overlays/home > /tmp/media-render.yaml
+          kubectl kustomize k8s/media-stack/overlays/prod > /tmp/media-render.yaml
 
       - name: Install kubeconform
         run: |

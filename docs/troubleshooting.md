@@ -8,14 +8,14 @@ Validate manifests first:
 
 ```bash
 kubectl kustomize k8s/infra
-kubectl kustomize k8s/media-stack/overlays/home
+kubectl kustomize k8s/media-stack/overlays/prod
 ```
 
 Apply in order:
 
 ```bash
 kubectl apply -k k8s/infra
-kubectl apply -k k8s/media-stack/overlays/home
+kubectl apply -k k8s/media-stack/overlays/prod
 ```
 
 ## 2) Pods Pending (PVC or storage issues)
@@ -65,7 +65,7 @@ kubectl -n longhorn-system get backups.longhorn.io -o wide
 Check per-volume labels (one-time attach for existing volumes):
 
 ```bash
-kubectl -n media get pvc sonarr-config radarr-config vaultwarden-data \
+kubectl -n media get pvc sonarr-config radarr-config vaultwarden-data mealie-data \
   -o custom-columns=PVC:.metadata.name,VOLUME:.spec.volumeName
 kubectl -n longhorn-system get volumes.longhorn.io <volume-name> -o yaml | rg -n "recurring-job.longhorn.io|backup-target"
 ```
@@ -102,6 +102,7 @@ dig +short sabnzbd.fol3y.us
 dig +short sonarr.fol3y.us
 dig +short radarr.fol3y.us
 dig +short vaultwarden.fol3y.us
+dig +short mealie.fol3y.us
 ```
 
 ## 7) Useful UI port-forwards

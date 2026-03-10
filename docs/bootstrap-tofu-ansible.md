@@ -94,6 +94,9 @@ Expected:
 - Longhorn via Helm:
   - `longhorn: true|false`
   - `longhorn_chart_version: "<chart-version>"`
+- Monitoring via Helm:
+  - `monitoring: true|false`
+  - `monitoring_chart_version: "<chart-version>"`
 - MetalLB:
   - `metallb: true|false`
   - `metallb_version: "<tag>"`

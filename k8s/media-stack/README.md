@@ -1,24 +1,24 @@
 # Media Stack (Kustomize)
 
-This folder organizes Sabnzbd, Sonarr, Radarr, and Vaultwarden into a reusable base with a home-cluster overlay.
+This folder organizes Sabnzbd, Sonarr, Radarr, Vaultwarden, and Mealie into a reusable base with a prod overlay.
 
 ## Apply
 
 ```bash
-kubectl apply -k k8s/media-stack/overlays/home
+kubectl apply -k k8s/media-stack/overlays/prod
 ```
 
 ## Preview
 
 ```bash
-kubectl kustomize k8s/media-stack/overlays/home
+kubectl kustomize k8s/media-stack/overlays/prod
 ```
 
 ## Layout
 
 - `base/`: reusable manifests for apps and storage.
-- `overlays/home/`: cluster-specific values (hosts, ingress class, issuer, image policy).
-- `overlays/home/extras/`: optional/cluster-local extras such as scheduled rollout restarts.
+- `overlays/prod/`: cluster-specific values (hosts, ingress class, issuer, image policy).
+- `overlays/prod/extras/`: optional/cluster-local extras such as scheduled rollout restarts.
 
 ## Backup Behavior
 

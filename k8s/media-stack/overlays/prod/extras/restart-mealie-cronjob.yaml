@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restart-mealie
+  namespace: media
+spec:
+  schedule: "18 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl
+              command:
+                - kubectl
+                - rollout
+                - restart
+                - deployment/mealie
+          restartPolicy: OnFailure

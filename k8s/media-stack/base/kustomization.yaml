@@ -6,6 +6,7 @@ resources:
   - storage/sonarr-config-pvc.yaml
   - storage/radarr-config-pvc.yaml
   - storage/vaultwarden-data-pvc.yaml
+  - storage/mealie-data-pvc.yaml
   - apps/sabnzbd/deployment.yaml
   - apps/sabnzbd/service.yaml
   - apps/sabnzbd/ingress.yaml
@@ -18,3 +19,6 @@ resources:
   - apps/vaultwarden/deployment.yaml
   - apps/vaultwarden/service.yaml
   - apps/vaultwarden/ingress.yaml
+  - apps/mealie/deployment.yaml
+  - apps/mealie/service.yaml
+  - apps/mealie/ingress.yaml

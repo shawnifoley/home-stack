@@ -6,6 +6,7 @@
   - `sonarr-config`
   - `radarr-config`
   - `vaultwarden-data`
+  - `mealie-data`
 - Reconnect workloads in namespace `media`
 - Re-enable recurring Longhorn backups
 
@@ -32,12 +33,12 @@ kubectl -n longhorn-system get backupvolumes.longhorn.io
 kubectl -n longhorn-system get backups.longhorn.io -o wide
 ```
 
-Expected: backup objects exist for Sonarr, Radarr, and Vaultwarden.
+Expected: backup objects exist for Sonarr, Radarr, Vaultwarden, and Mealie.
 
 Apply stack and take services down
 
 ```bash
-kubectl apply -k k8s/media-stack/overlays/home
+kubectl apply -k k8s/media-stack/overlays/prod
 ```
 
 Wait for rollouts:
@@ -46,6 +47,7 @@ Wait for rollouts:
 kubectl rollout status deployment/sonarr -n media
 kubectl rollout status deployment/radarr -n media
 kubectl rollout status deployment/vaultwarden -n media
+kubectl rollout status deployment/mealie -n media
 ```
 
 Take nodes dowwn to restore volumes
@@ -54,6 +56,7 @@ Take nodes dowwn to restore volumes
 kubectl -n media scale deploy vaultwarden --replicas=0
 kubectl -n media scale deploy sonarr --replicas=0
 kubectl -n media scale deploy radarr --replicas=0
+kubectl -n media scale deploy mealie --replicas=0
 ```
 
 ## 3) Restore volumes from Longhorn backups
@@ -63,7 +66,7 @@ Use Longhorn UI (`Backup` page):
 kubectl -n longhorn-system port-forward svc/longhorn-frontend 8080:80
 ```
 
-1. Delete `detached` volumes ( vaultwarden, sonar, radarr )
+1. Delete `detached` volumes (vaultwarden, sonarr, radarr, mealie)
 2. Restore each backup to a new Longhorn volume.
 3. For each restored volume, go to `Operation` -> `Create PV/PVC` action and create PVCs in namespace `media`.
 
@@ -75,6 +78,7 @@ Bring nodes backup with restored volumes
 kubectl -n media scale deploy vaultwarden --replicas=1
 kubectl -n media scale deploy sonarr --replicas=1
 kubectl -n media scale deploy radarr --replicas=1
+kubectl -n media scale deploy mealie --replicas=1
 ```
 
 ## 5) Re-attach recurring backups to restored volumes
@@ -82,7 +86,7 @@ kubectl -n media scale deploy radarr --replicas=1
 Map PVCs to Longhorn volume names:
 
 ```bash
-kubectl -n media get pvc sonarr-config radarr-confige vaultwarden-data \
+kubectl -n media get pvc sonarr-config radarr-config vaultwarden-data mealie-data \
   -o custom-columns=PVC:.metadata.name,VOLUME:.spec.volumeName
 ```
 
@@ -100,6 +104,10 @@ kubectl -n longhorn-system label volumes.longhorn.io <radarr-volume-name> \
 kubectl -n longhorn-system label volumes.longhorn.io <vaultwarden-volume-name> \
   recurring-job.longhorn.io/source=enabled \
   recurring-job.longhorn.io/backup-vaultwarden-daily=enabled --overwrite
+
+kubectl -n longhorn-system label volumes.longhorn.io <mealie-volume-name> \
+  recurring-job.longhorn.io/source=enabled \
+  recurring-job.longhorn.io/backup-mealie-weekly=enabled --overwrite
 ```
 
 ## 6) Validate end state

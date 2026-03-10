@@ -31,6 +31,10 @@
   ansible.builtin.include_tasks: longhorn.yml
   when: longhorn | bool
 
+- name: Include monitoring tasks
+  ansible.builtin.include_tasks: monitoring.yml
+  when: monitoring | bool
+
 - name: Include Traefik tasks
   ansible.builtin.include_tasks: traefik.yml
   when: traefik | bool
