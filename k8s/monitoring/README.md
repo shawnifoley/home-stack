@@ -2,7 +2,7 @@
 
 This folder scaffolds cluster monitoring with:
 
-- `kube-prometheus-stack` (Prometheus, Alertmanager, Grafana)
+- `kube-prometheus-stack` (Prometheus, Alertmanager)
 - custom `PrometheusRule` alerts for home-stack workloads and Longhorn
 
 ## Install
@@ -31,7 +31,6 @@ kubectl get ingress -n monitoring
 ## Access UIs
 
 ```bash
-kubectl -n monitoring port-forward svc/kube-prometheus-stack-grafana 3000:80
 kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 9090:9090
 kubectl -n monitoring port-forward svc/kube-prometheus-stack-alertmanager 9093:9093
 ```
@@ -40,4 +39,3 @@ kubectl -n monitoring port-forward svc/kube-prometheus-stack-alertmanager 9093:9
 
 - `prometheus-rules.yaml` uses label `release: kube-prometheus-stack` so rules are picked up by the chart defaults.
 - Longhorn alerts assume Longhorn metrics are available in Prometheus.
-- Grafana ingress is managed in `grafana-ingress.yaml` and targets `https://grafana.fol3y.us`.
